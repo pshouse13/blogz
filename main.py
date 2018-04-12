@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -6,6 +6,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:blog@localhost:8889/build-a-blog'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = 'y337kGcys&zP3B'
 
 class Blog(db.Model):
 
@@ -20,5 +21,24 @@ class Blog(db.Model):
 @app.route('/blog', methods=['POST'])
 def blog():
 
+    return render_template('blog.html')
+
 @app.route('/newpost', methods=['POST'])
 def newpost():
+
+    if request.method == 'POST':
+        title = request.form['title']
+        entry = request.form['entry']
+
+        #validate info
+
+        blog = Blog.query.filter_by(entry=entry).first()
+        if not blog:
+            new_blog = Blog(title, entry)
+            db.session.add(new_blog)
+            db.session.commit()
+            return redirect('/blog')
+        else:
+            return '<h1> Add an entry </h1>'
+
+    return render_template('newpost.html')
