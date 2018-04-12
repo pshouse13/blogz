@@ -13,13 +13,9 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(200))
 
-    def __init__(self, title):
+    def __init__(self, title, body):
         self.title = title
-
-@app.route('/', methods=['POST', 'GET'])
-def index():
-
-    return render_template('base.html')
+        self.body = body
 
 @app.route('/blog', methods=['POST'])
 def blog():
