@@ -18,13 +18,14 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
-@app.route('/blog', methods=['POST'])
+@app.route('/blog', methods=['POST', 'GET'])
 def blog():
 
+    blog_entry = Blog.query.filter_by(body=body).first()
     return render_template('blog.html')
 
-@app.route('/newpost', methods=['POST'])
-def newpost():
+@app.route('/newpost', methods=['POST', 'GET'])
+def new_post():
 
     if request.method == 'POST':
         title = request.form['title']
