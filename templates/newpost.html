@@ -9,13 +9,13 @@
         <tr>
             <td><label for="title">Title for your new blog:</label></td>
             <td>
-                <input name="title" type="text"/>
+                <input name="title" type="text" value='{{new_title}}'/>
             </td>
         </tr>
         <tr>
             <td><label for="body">Your new blog:</label></td>
             <td>
-                <textarea rows='4' columns='50'></textarea>
+                <textarea rows='4' columns='50' name='body'>{{new_body}}</textarea>
             </td>
         </tr>
     </table>

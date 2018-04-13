@@ -23,11 +23,10 @@ class Blog(db.Model):
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
 
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-
-    return render_template('blog.html')
+    blod_id = request.args.get('id')
+    if blog_id:
+        blog = Blog.query.get(blog_id)
+        return render_template('blog.html', blog=blog)
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
@@ -36,10 +35,15 @@ def new_post():
         new_title = request.form['title']
         new_body = request.form['body']
         new_post = Blog(new_title, new_body)
-        db.session.add(new_post)
-        db.session.commit()
+
+        if new_post.is_valid():
+            db.session.add(new_post)
+            db.session.commit()
+        else:
+            flash('You need a title and body to create a new post')
+            return render_template('newpost.html')
     else:
-        return render_template('newpost.html')
+        return render_template('new_post.html')
 
 #run app
 if __name__ == "__main__":
