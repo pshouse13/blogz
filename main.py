@@ -23,7 +23,7 @@ class Blog(db.Model):
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
 
-    blod_id = request.args.get('id')
+    blog_id = request.args.get('id')
     if blog_id:
         blog = Blog.query.get(blog_id)
         return render_template('blog.html', blog=blog)
