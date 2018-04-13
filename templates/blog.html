@@ -6,14 +6,12 @@
 
 {% if blog|length == 0 %}
 <p>No blog entries yet</p>
-{% else %}
+{% endif %}
 
-    <ul>{{blog.title}}
-        {% for blog in blogs %}
-        <li>
-            {{blog.body}}
-        </li>
-        {% endfor %}
-    </ul>
+<ul>
+    {% for blog in blogs %}
+    <li>{{blog.title}}</li>
+    {% endfor %}
+</ul>
 
 {% endblock %}

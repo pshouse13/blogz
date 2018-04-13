@@ -23,31 +23,23 @@ class Blog(db.Model):
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
 
-    title = request.form['title']
-    entry = request.form['body']
+    if request.method == 'POST':
+        title = request.form['title']
+        body = request.form['body']
 
-    blog_entry = Blog.query.filter_by(title=title).first()
-    return render_template('blog.html', blog_entry=blog_entry)
+    return render_template('blog.html')
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
 
     if request.method == 'POST':
-        title = request.form['title']
-        entry = request.form['body']
-
-        #validate info
-
-        blog = Blog.query.filter_by(title=title).first()
-        if not blog:
-            new_blog = Blog(title, body)
-            db.session.add(new_blog)
-            db.session.commit()
-            return redirect('/blog')
-        else:
-            return '<h1> Add an entry </h1>'
-
-    return render_template('newpost.html')
+        new_title = request.form['title']
+        new_body = request.form['body']
+        new_post = Blog(new_title, new_body)
+        db.session.add(new_post)
+        db.session.commit()
+    else:
+        return render_template('newpost.html')
 
 #run app
 if __name__ == "__main__":
