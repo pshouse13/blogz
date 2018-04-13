@@ -8,10 +8,10 @@
 <p>No blog entries yet</p>
 {% else %}
 
-    <ul>
+    <ul>{{blog.title}}
         {% for blog in blogs %}
         <li>
-            {{blog.title}}
+            {{blog.body}}
         </li>
         {% endfor %}
     </ul>

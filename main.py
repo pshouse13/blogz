@@ -8,6 +8,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'y337kGcys&zP3B'
 
+#classes
 class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
@@ -18,24 +19,28 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
+#begin handlers
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
 
-    blog_entry = Blog.query.filter_by(body=body).first()
-    return render_template('blog.html')
+    title = request.form['title']
+    entry = request.form['body']
+
+    blog_entry = Blog.query.filter_by(title=title).first()
+    return render_template('blog.html', blog_entry=blog_entry)
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
 
     if request.method == 'POST':
         title = request.form['title']
-        entry = request.form['entry']
+        entry = request.form['body']
 
         #validate info
 
-        blog = Blog.query.filter_by(entry=entry).first()
+        blog = Blog.query.filter_by(title=title).first()
         if not blog:
-            new_blog = Blog(title, entry)
+            new_blog = Blog(title, body)
             db.session.add(new_blog)
             db.session.commit()
             return redirect('/blog')
@@ -43,3 +48,7 @@ def new_post():
             return '<h1> Add an entry </h1>'
 
     return render_template('newpost.html')
+
+#run app
+if __name__ == "__main__":
+    app.run()
