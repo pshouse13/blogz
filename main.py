@@ -19,31 +19,42 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
+    def validate_entry(self):
+        if self.title and self.body:
+            return True
+        else:
+            return False
+
 #begin handlers
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
 
+    blogs = Blog.query.all()
+
     blog_id = request.args.get('id')
-    if blog_id:
+    if (blog_id):
         blog = Blog.query.get(blog_id)
-        return render_template('blog.html', blog=blog)
+        return render_template('solo.html', blog=blog)
+    
+    return render_template('blog.html', blogs=blogs)
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
 
     if request.method == 'POST':
-        new_title = request.form['title']
-        new_body = request.form['body']
-        new_post = Blog(new_title, new_body)
+        title = request.form['title']
+        body = request.form['body']
+        new_entry = Blog(title, body)
 
-        if new_post.is_valid():
-            db.session.add(new_post)
+        if new_entry.validate_entry():
+            db.session.add(new_entry)
             db.session.commit()
+            return redirect('/blog')
         else:
-            flash('You need a title and body to create a new post')
-            return render_template('newpost.html')
+            flash("Please do not leave either form blank.")
+            return render_template('newpost.html', title=title, body=body)
     else:
-        return render_template('new_post.html')
+        return render_template('newpost.html')
 
 #run app
 if __name__ == "__main__":
