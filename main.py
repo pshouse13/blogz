@@ -49,7 +49,7 @@ def new_post():
         if new_entry.validate_entry():
             db.session.add(new_entry)
             db.session.commit()
-            return redirect('/blog')
+            return redirect('/blog?id=' + str(new_entry.id))
         else:
             flash("Please do not leave either form blank.")
             return render_template('newpost.html', title=title, body=body)
