@@ -39,7 +39,13 @@ class User(db.Model):
 
 #begin handlers
 
-@app.route('/login', methods=['POST'])
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'signup']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
+
+@app.route('/login', methods=['POST', 'GET'])
 def login():
 
     if request.method == 'POST':
@@ -53,10 +59,15 @@ def login():
             return redirect('/newpost')
         else:
             flash('Username or password is not correct')
-    else:
-        return render_template('login.html')
+    
+    return render_template('login.html')
 
-@app.route('/signup', methods=['POST'])
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect('/blog')
+
+@app.route('/signup', methods=['POST', 'GET'])
 def signup():
 
     if request.method == 'POST':
@@ -75,8 +86,8 @@ def signup():
             return redirect('/newpost')
         else:
             flash('Username already in use' or 'Passwords do not match')
-    else:
-        return render_template('register.html')
+
+    return render_template('signup.html')
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
@@ -93,7 +104,7 @@ def blog():
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
 
-    owner = User.query.filter_by(email=session['email']).first()
+    owner = User.query.filter_by(username=session['username']).first()
 
     if request.method == 'POST':
         title = request.form['title']

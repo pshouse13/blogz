@@ -1,21 +1,27 @@
 {% extends "base.html" %}
 
+{% block content %}
+
 <h1>Log In</h1>
+
+<p>If you do not have an account already <a href='/signup'>sign up</a> for one now</p>
 
 <form action='/login' method='POST'>
     <table>
         <tr>
             <td><label for="username">Username</label></td>
             <td>
-                <input name="username" type="text"/>
+                <input name="username" type="text" required/>
             </td>
         </tr>
         <tr>
             <td><label for="password">Password</label></td>
             <td>
-                <input name='password' type='text' />
+                <input name='password' type='password' required/>
             </td>
         </tr>
     </table>
     <input type="submit" value="Log in!"/>
 </form>
+
+{% endblock %}

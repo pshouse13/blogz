@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block content %}
+
 <h1>Sign Up!</h1>
 
 <form action='/signup' method='POST'>
@@ -7,21 +9,23 @@
         <tr>
             <td><label for="username">Username</label></td>
             <td>
-                <input name="username" type="text"/>
+                <input name="username" type="text" required/>
             </td>
         </tr>
         <tr>
             <td><label for="password">Password</label></td>
             <td>
-                <input name='password' type='text' />
+                <input name='password' type='password' required/>
             </td>
         </tr>
         <tr>
             <td><label for='verify'>Verify Password</label></td>
             <td>
-                <input name='verify' type='text' />
+                <input name='verify' type='password' required/>
             </td>
         </tr>
     </table>
     <input type="submit" value="Log in!"/>
 </form>
+
+{% endblock %}
