@@ -42,12 +42,41 @@ class User(db.Model):
 @app.route('/login', methods=['POST'])
 def login():
 
-    
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.password == password:
+            session['username'] = username
+            flash('Logged in')
+            return redirect('/newpost')
+        else:
+            flash('Username or password is not correct')
+    else:
+        return render_template('login.html')
 
 @app.route('/signup', methods=['POST'])
 def signup():
 
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        verify = request.form['verify']
 
+        # TODO - validate info 
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            new_user = User(username, password)
+            db.session.add(new_user)
+            db.session.commit()
+            session['username'] = username
+            return redirect('/newpost')
+        else:
+            flash('Username already in use' or 'Passwords do not match')
+    else:
+        return render_template('register.html')
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
