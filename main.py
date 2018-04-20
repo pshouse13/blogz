@@ -41,9 +41,15 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup']
+    allowed_routes = ['login', 'signup', 'blog', 'index'] #fix so blog and index work without login
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
+
+@app.route('/index')
+def index():
+
+    blogs = Blog.query.all()
+    return render_template('blog.html', blogs=blogs)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -109,7 +115,7 @@ def new_post():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        new_entry = Blog(title, body, owner)
+        new_entry = Blog(title, body)
 
         if new_entry.validate_entry():
             db.session.add(new_entry)
