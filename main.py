@@ -105,6 +105,11 @@ def blog():
     if (blog_id):
         blog = Blog.query.get(blog_id)
         return render_template('solo.html', blog=blog)
+
+    singleUser = request.args.get('userid')
+    if (singleUser):
+        post = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('singleUser.html', post=post)
     
     return render_template('blog.html', blogs=blogs)
 
