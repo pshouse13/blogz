@@ -139,6 +139,15 @@ def new_post():
     else:
         return render_template('newpost.html')
 
+@app.route('/single', methods=['GET'])
+def single():
+
+    singleUser = request.args.get('userid')
+    if singleUser:
+        existing_singleUser = User.query.filter_by(username=username).first()
+        singleUser_posts = existing_singleUser.blogs
+        return render_template('singleUser.html', blogs=singleUser_posts)
+
 #run app
 if __name__ == "__main__":
     app.run()
