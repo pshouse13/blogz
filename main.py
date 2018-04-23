@@ -1,6 +1,8 @@
 from flask import Flask, request, redirect, render_template, session, flash
+from flask_sqlalchemy import SQLAlchemy
 from app import app, db 
 from models import Blog, User
+from hashutils import make_pw_hash, check_pw_hash
 
 
 @app.before_request
@@ -24,24 +26,25 @@ def index():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
 
-    if request.method == 'POST':
+    if request.method == 'GET':
+        return render_template('login.html')
+    elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username=username).first()
-
-        if user and user.password == password:
-            session['username'] = username
-            flash('Logged in')
-            return redirect('/newpost')
-        else:
-            flash('Username or password is not correct')
-    
-    return render_template('login.html')
+        users = User.query.filter_by(username=username)
+        if users.count() == 1:
+            user = users.first()
+            if user and check_pw_hash(password, user.pw_hash):
+                session['user'] = user.username
+                flash('Welcome back, '+user.username)
+                return redirect("/")
+        flash('Bad username or password')
+        return redirect("/login")
 
 @app.route('/logout')
 def logout():
     del session['username']
-    return redirect('/blog')
+    return redirect('/')
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -102,8 +105,8 @@ def new_post():
     else:
         return render_template('newpost.html')
 
-@app.route('/single', methods=['GET'])
-def single():
+@app.route('/userposts', methods=['GET'])
+def userposts():
 
     singleUser = request.args.get('userid')
     if singleUser:
