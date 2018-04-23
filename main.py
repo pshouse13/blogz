@@ -144,7 +144,7 @@ def single():
 
     singleUser = request.args.get('userid')
     if singleUser:
-        existing_singleUser = User.query.filter_by(username=username).first()
+        existing = User.query.filter_by(username=username).first()
         singleUser_posts = existing_singleUser.blogs
         return render_template('singleUser.html', blogs=singleUser_posts)
 
