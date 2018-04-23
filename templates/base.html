@@ -4,17 +4,44 @@
         <title>{{title}}</title>
         <style>
             .error {
-                color: red;
-            }
+    color: red;
+}
+
+html {
+    background-color: grey;
+    color: white;
+}
+
+.log a {
+    display: inline-block;
+    float: right;
+    border: solid;
+    text-decoration: none;
+    padding: 2px;
+    color: lightskyblue;
+    margin: 2px;
+}
+
+.nav a {
+    border: solid;
+    display: inline-block;
+    text-decoration: none;
+    padding: 2px;
+    color: lightskyblue;
+}
         </style>
     </head>
 <body>
 
-    <div>
+    <div class='log'>
         <a href='/login'>Log in</a>
+        <a href='/logout'>Log out</a>
+    </div>
+
+    <div class='nav'>
         <a href='/'>Home</a>
-        <a href='/blog'>Main Blog Page</a>
-        <a href='/newpost'>Add a Blog Entry</a>
+        <a href='/blog'>All Entries</a>
+        <a href='/newpost'>Add an Entry</a>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=True) %}
@@ -27,8 +54,6 @@
 
     {% block content %}
     {% endblock %}
-
-    <a href='/logout'>Log out</a>
 
 </body>
 </html>

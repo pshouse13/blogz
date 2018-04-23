@@ -50,6 +50,12 @@ def require_login():
 def index():
 
     users = User.query.all()
+
+    singleUser = request.args.get('userid')
+    if (singleUser):
+        post = Blog.query.filter_by(owner_id=owner_id).all()
+        return render_template('singleUser.html', post=post)
+
     return render_template('index.html', users=users)
 
 @app.route('/login', methods=['POST', 'GET'])
