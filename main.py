@@ -16,10 +16,8 @@ def index():
 
     users = User.query.all()
 
-    singleUser = request.args.get('userid')
-    if (singleUser):
-        post = Blog.query.filter_by(owner_id=owner_id).all()
-        return render_template('singleUser.html', post=post)
+    singleUser = request.args.get('user.id') #figure this out
+    
 
     return render_template('index.html', users=users)
 
@@ -104,15 +102,6 @@ def new_post():
             return render_template('newpost.html', title=title, body=body, owner=owner)
     else:
         return render_template('newpost.html')
-
-@app.route('/userposts', methods=['GET'])
-def userposts():
-
-    singleUser = request.args.get('userid')
-    if singleUser:
-        existing = User.query.filter_by(username=username).first()
-        singleUser_posts = existing_singleUser.blogs
-        return render_template('singleUser.html', blogs=singleUser_posts)
 
 #run app
 if __name__ == "__main__":
