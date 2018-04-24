@@ -15,10 +15,7 @@ def require_login():
 def index():
 
     users = User.query.all()
-
-    singleUser = request.args.get('user.id') #figure this out
     
-
     return render_template('index.html', users=users)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -35,14 +32,16 @@ def login():
             if user and check_pw_hash(password, user.pw_hash):
                 session['user'] = user.username
                 flash('Welcome back, '+user.username)
-                return redirect("/")
-        flash('Bad username or password')
-        return redirect("/login")
+                return redirect("/newpost")
+        else:
+            flash('Bad username or password')
+
+    return redirect("/login")
 
 @app.route('/logout')
 def logout():
     del session['username']
-    return redirect('/')
+    return redirect('/login')
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -71,15 +70,16 @@ def blog():
 
     blogs = Blog.query.all()
 
+    users = request.args.get('userid')
+
     blog_id = request.args.get('id')
     if (blog_id):
         blog = Blog.query.get(blog_id)
         return render_template('solo.html', blog=blog)
 
-    singleUser = request.args.get('userid')
-    if (singleUser):
-        post = Blog.query.filter_by(owner_id=user_id).all()
-        return render_template('singleUser.html', post=post)
+    if users:
+        posts = Blog.query.filter_by(owner_id=users).all()
+        return render_template('singleUser.html', posts=posts)
     
     return render_template('blog.html', blogs=blogs)
 
@@ -102,6 +102,11 @@ def new_post():
             return render_template('newpost.html', title=title, body=body, owner=owner)
     else:
         return render_template('newpost.html')
+
+@app.route('/singleUser', methods=['POST', 'GET'])
+def singleUser():
+
+    return render_template('singleUser.html')
 
 #run app
 if __name__ == "__main__":
