@@ -5,11 +5,16 @@ from models import Blog, User
 from hashutils import make_pw_hash, check_pw_hash
 
 
+def logged_in_user():
+    owner = User.query.filter_by(username=session['username']).first()
+    return owner
+
+endpoints_without_login = ['login', 'register', 'index', 'blog']
+
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'blog', 'index'] #fix so blog and index work without login
-    if request.endpoint not in allowed_routes and 'username' not in session:
-        return redirect('/login')
+    if not ('username' in session or request.endpoint in endpoints_without_login):
+        return redirect("/login")
 
 @app.route('/')
 def index():
@@ -18,7 +23,7 @@ def index():
     
     return render_template('index.html', users=users)
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
 
     if request.method == 'GET':
@@ -30,18 +35,11 @@ def login():
         if users.count() == 1:
             user = users.first()
             if user and check_pw_hash(password, user.pw_hash):
-                session['user'] = user.username
+                session['username'] = user.username
                 flash('Welcome back, '+user.username)
-                return redirect("/newpost")
-        else:
-            flash('Bad username or password')
-
-    return redirect("/login")
-
-@app.route('/logout')
-def logout():
-    del session['username']
-    return redirect('/login')
+                return redirect("/")
+        flash('Bad username or password')
+        return redirect("/login")
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -51,37 +49,36 @@ def signup():
         password = request.form['password']
         verify = request.form['verify']
 
-        # TODO - validate info 
-
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            new_user = User(username, password)
-            db.session.add(new_user)
-            db.session.commit()
-            session['username'] = username
-            return redirect('/newpost')
-        else:
-            flash('Username already in use' or 'Passwords do not match')
-
-    return render_template('signup.html')
+        username_db_count = User.query.filter_by(username=username).count()
+        if username_db_count > 0:
+            flash('Oh, no! ' + username +  ' is already taken!')
+            return redirect('/signup')
+        if password != verify:
+            flash('Passwords did not match')
+            return redirect('/signup')
+        user = User(username=username, password=password)
+        db.session.add(user)
+        db.session.commit()
+        session['username'] = user.username
+        return redirect("/")
+    else:
+        return render_template('signup.html')
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
 
-    blogs = Blog.query.all()
-
-    users = request.args.get('userid')
-
     blog_id = request.args.get('id')
-    if (blog_id):
-        blog = Blog.query.get(blog_id)
-        return render_template('solo.html', blog=blog)
+    user_id = request.args.get('userid')
+    posts = Blog.query.all()
 
-    if users:
-        posts = Blog.query.filter_by(owner_id=users).all()
-        return render_template('singleUser.html', posts=posts)
-    
-    return render_template('blog.html', blogs=blogs)
+    if blog_id:
+        post = Blog.query.filter_by(id=blog_id).first()
+        return render_template("solo.html", title=post.title, body=post.body, user=post.owner.username, user_id=post.owner_id)
+    if user_id:
+        entries = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('singleUser.html', entries=entries)
+
+    return render_template('blog.html', posts=posts)
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
@@ -103,10 +100,10 @@ def new_post():
     else:
         return render_template('newpost.html')
 
-@app.route('/singleUser', methods=['POST', 'GET'])
-def singleUser():
-
-    return render_template('singleUser.html')
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect('/')
 
 #run app
 if __name__ == "__main__":
