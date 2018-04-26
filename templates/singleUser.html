@@ -4,13 +4,12 @@
 
     <h1>User Posts</h1>
 
-        <hr>
-        {% for post in posts %}
+    {% for user_post in user_posts %}
 
-                <a href="/blog?id={{post.id}}"><h2>{{ post.title }}</h2></a>
-                <p class="body-text">{{ post.body }}</p>
-                <p class="user">Posted by: <a href="/blog?userid={{post.owner_id}}">{{ post.owner.username }}</a></p>
+          <a href="/blog?id={{user_post.id}}"><h2>{{ user_post.title }}</h2></a>
+          <p>{{ user_post.body }}</p>
+          <p>Posted by: <a href="/blog?userid={{user_post.owner_id}}">{{ user_post.owner.username }}</a></p>
 
-        {% endfor %}
+    {% endfor %}
 
 {% endblock %}

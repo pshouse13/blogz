@@ -75,8 +75,8 @@ def blog():
         post = Blog.query.filter_by(id=blog_id).first()
         return render_template("solo.html", title=post.title, body=post.body, user=post.owner.username, user_id=post.owner_id)
     if user_id:
-        post = Blog.query.filter_by(owner_id=user_id).all()
-        return render_template('singleUser.html', post=post)
+        user_posts = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('singleUser.html', user_posts=user_posts)
 
     return render_template('blog.html', posts=posts)
 
@@ -103,7 +103,7 @@ def new_post():
 @app.route('/logout')
 def logout():
     del session['username']
-    return redirect('/')
+    return redirect('/blog')
 
 #run app
 if __name__ == "__main__":
