@@ -9,7 +9,7 @@ def logged_in_user():
     owner = User.query.filter_by(username=session['username']).first()
     return owner
 
-endpoints_without_login = ['login', 'register', 'index', 'blog']
+endpoints_without_login = ['login', 'register', 'index', 'blog', 'signup']
 
 @app.before_request
 def require_login():
@@ -75,8 +75,8 @@ def blog():
         post = Blog.query.filter_by(id=blog_id).first()
         return render_template("solo.html", title=post.title, body=post.body, user=post.owner.username, user_id=post.owner_id)
     if user_id:
-        entries = Blog.query.filter_by(owner_id=user_id).all()
-        return render_template('singleUser.html', entries=entries)
+        post = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('singleUser.html', post=post)
 
     return render_template('blog.html', posts=posts)
 

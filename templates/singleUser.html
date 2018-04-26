@@ -6,13 +6,11 @@
 
         <hr>
         {% for post in posts %}
-            <div class="post">
 
-                <a href="/blog?id={{blog.id}}"><h2>{{ blog.title }}</h2></a>
-                <p class="body-text">{{ blog.body }}</p>
-                <p class="user">Posted by: <a href="/blog?owner_id={{blog.owner_id}}">{{ blog.owner.username }}</a></p>
+                <a href="/blog?id={{post.id}}"><h2>{{ post.title }}</h2></a>
+                <p class="body-text">{{ post.body }}</p>
+                <p class="user">Posted by: <a href="/blog?userid={{post.owner_id}}">{{ post.owner.username }}</a></p>
 
-            </div>
         {% endfor %}
 
 {% endblock %}
